@@ -21,6 +21,7 @@ ul {
   height: 100vh;
   padding: 2rem;
   background-color: #fafafa;
+  color: var(--text-dark);
 }
 
 .container {
@@ -34,10 +35,45 @@ ul {
 
 .side-info {
   border-right: 2px dashed var(--text-dark);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
-.btn {
+.title {
+  padding: 4rem;
+  font-size: 5rem;
+}
+
+.add-form {
+  padding: 3rem;
+}
+.add-form form {
+  display: grid;
+  gap: 2rem;
+}
+
+.add-form form label {
+  visibility: hidden;
+}
+
+.add-form input {
+  border: none;
+  outline: none;
+  border-radius: 5px;
   padding: 1rem 2rem;
+  font-size: 1.5rem;
+}
+
+.add-form input:active,
+.add-form input:focus {
+  outline: solid #007bff 1px;
+  box-shadow: 0 5px 10px -4px rgba(0, 0, 0, 0.2);
+}
+
+.add-form button {
+  width: min-content;
+  justify-self: center;
+  padding: 1rem 4rem;
   outline: none;
   border: none;
   background-color: var(--bg-success);
@@ -46,27 +82,49 @@ ul {
   font-weight: bold;
   cursor: pointer;
   transition: all 0.5s;
+  box-shadow: 0 5px 10px -4px rgba(0, 0, 0, 0.2);
+}
+
+.add-form button:hover {
+  transform: scale(1.15);
   box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.7);
 }
 
-.btn:after {
-  content: "+";
-  position: absolute;
-  opacity: 0;
-  /* top: 14px; */
-  right: -20px;
-
-  transition: 0.5s;
-  transition-delay: 0.2s;
+.add-form h2 {
+  font-size: 3rem;
+  font-weight: normal;
 }
 
-.btn:hover {
-  padding-right: 3rem;
+.footer {
+  justify-self: center;
+  padding: 2rem;
 }
 
-.btn:hover:after {
-  opacity: 1;
-  right: 10px;
+.footer h4 {
+  font-size: 1.3rem;
+}
+
+.btn {
+  width: 7rem;
+  aspect-ratio: 1/1;
+  padding: 1rem;
+  outline: none;
+  border: none;
+  background-color: var(--bg-success);
+  border-radius: 50%;
+  color: var(--text-white);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.5s;
+}
+
+.btn:hover ion-icon {
+  transform: rotate(90deg);
+}
+
+.btn ion-icon {
+  font-size: 4rem;
+  transition: all 0.5s;
 }
 
 .fixed {
