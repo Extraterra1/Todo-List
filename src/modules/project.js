@@ -8,8 +8,8 @@ export default class Project {
     if (todos) {
       todos.forEach((e) => this.addTodo(e));
     }
-    // PubSub.subscribe("newTodo", this.addTodo);
   }
+
   addTodo = (todo) => {
     this.todos.push(todo);
     PubSub.publish("projectChanged", this);

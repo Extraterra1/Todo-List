@@ -6,6 +6,8 @@ import Todo from "./modules/todo";
 import DOMstuff from "./modules/DOMstuff";
 
 const DOM = new DOMstuff();
+DOM.addNewProjectListener();
+PubSub.subscribe("newProjectDOM", (ev, name) => new Project(name));
 
 const todoList = new List();
 const newProject = new Project("gym", [
@@ -18,13 +20,7 @@ let newTodo = new Todo("Joe", "Mama", "02/03/2219", 2);
 
 // console.log(todoList.projects);
 
-DOM.addMinimizeListeners();
-
-let counter = 0;
-// const addProjectButton = document.querySelector(".addProject");
-// addProjectButton.addEventListener("click", () => new Project(`test${counter++}`));
-
-// window.todoList = todoList;
-// window.newProject = newProject;
-// window.project = Project;
-// window.todo = Todo;
+window.todoList = todoList;
+window.newProject = newProject;
+window.project = Project;
+window.todo = Todo;

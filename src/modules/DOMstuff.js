@@ -18,12 +18,35 @@ export default class DOM {
   };
 
   renderTodos = (ev, project) => {
-    const ul = document.querySelector(`ul.${project.name}`);
-    ul.innerHTML = "";
+    const projectContainer = Array.from(document.querySelectorAll(".todo-group-header h4"))
+      .find((el) => el.textContent === project.name)
+      .closest(".todo-group");
+    const projectHeader = projectContainer.querySelector(".todo-group-header");
+    projectContainer.innerHTML = "";
+    projectContainer.appendChild(projectHeader);
+
     project.todos.forEach((e) => {
-      const li = document.createElement("li");
-      li.textContent = e.title;
-      // ul.appendChild(li);
+      const todoHTML = `<div class="todo-content">
+              <div class="todo-content-group">
+                <ion-icon name="document"></ion-icon>
+                <span class="todo-title">${e.title}</span>
+              </div>
+              <div class="todo-content-group">
+                <ion-icon name="reader"></ion-icon>
+                <span class="todo-desc">${e.description}</span>
+              </div>
+              <div class="todo-content-group">
+                <ion-icon name="calendar"></ion-icon>
+                <span class="todo-due">Due ${e.dueDate}</span>
+              </div>
+              <div class="todo-content-group">
+                <ion-icon name="create"></ion-icon>
+                <ion-icon name="trash"></ion-icon>
+              </div>
+            </div>`;
+      projectContainer.innerHTML += todoHTML;
+      const minimizeButton = projectContainer.querySelector(".todo-group-header ion-icon");
+      this.addMinimizeListener(minimizeButton);
     });
   };
 
@@ -37,8 +60,16 @@ export default class DOM {
     if (!isMinimizeButton) return this.setAttribute("name", "remove-outline");
   };
 
-  addMinimizeListeners = () => {
-    const buttons = document.querySelectorAll(".todo-group-header ion-icon");
-    buttons.forEach((e) => e.addEventListener("click", this.handleMinimize));
+  addMinimizeListener = (button) => {
+    button.addEventListener("click", this.handleMinimize);
+  };
+
+  addNewProjectListener = function () {
+    const button = document.querySelector("#addProject");
+    button.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      const name = document.querySelector("#project").value;
+      if (name) PubSub.publish("newProjectDOM", name);
+    });
   };
 }
