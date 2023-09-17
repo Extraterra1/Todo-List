@@ -16,7 +16,9 @@ const newProject = new Project("gym", [
 
 let newTodo = new Todo("Joe", "Mama", "02/03/2219", 2);
 
-console.log(todoList.projects);
+// console.log(todoList.projects);
+
+DOM.addMinimizeListeners();
 
 let counter = 0;
 // const addProjectButton = document.querySelector(".addProject");

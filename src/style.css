@@ -127,10 +127,13 @@ ul {
 .todo-content {
   padding: 2rem;
   padding-left: 4rem;
+  opacity: 1;
 
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   font-size: 1.5rem;
+
+  transition: all 0.3s;
 }
 
 .todo-content.hidden {
@@ -140,6 +143,14 @@ ul {
 
 .todo-content ion-icon {
   font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.todo-content ion-icon[name="trash"]:hover {
+  color: var(--text-danger);
+}
+.todo-content ion-icon[name="create"]:hover {
+  color: var(--bg-success);
 }
 
 .todo-content-group {

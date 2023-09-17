@@ -6,15 +6,15 @@ export default class DOM {
     PubSub.subscribe("projectChanged", this.renderTodos);
   }
   renderProjects = (ev, project) => {
-    const projectsDiv = document.querySelector(".projects");
-    const selfContainer = document.createElement("div");
-    const h1 = document.createElement("h1");
-    h1.textContent = project.name;
-    selfContainer.appendChild(h1);
-    const ul = document.createElement("ul");
-    ul.classList.add(project.name);
-    selfContainer.appendChild(ul);
-    // projectsDiv.appendChild(selfContainer);
+    const projectGroupHTML = `<div class="todo-group">
+            <div class="todo-group-header">
+              <h4>${project.name}</h4>
+              <ion-icon name="remove-outline"></ion-icon>
+            </div>
+          </div>`;
+
+    const contentContainer = document.querySelector(".content");
+    contentContainer.innerHTML += projectGroupHTML;
   };
 
   renderTodos = (ev, project) => {
@@ -25,5 +25,20 @@ export default class DOM {
       li.textContent = e.title;
       // ul.appendChild(li);
     });
+  };
+
+  handleMinimize = function (ev) {
+    const parentGroup = this.closest(".todo-group");
+    parentGroup.classList.toggle("minimized");
+    const children = parentGroup.querySelectorAll(".todo-content");
+    children.forEach((e) => e.classList.toggle("hidden"));
+    const isMinimizeButton = this.getAttribute("name").includes("remove");
+    if (isMinimizeButton) return this.setAttribute("name", "add-outline");
+    if (!isMinimizeButton) return this.setAttribute("name", "remove-outline");
+  };
+
+  addMinimizeListeners = () => {
+    const buttons = document.querySelectorAll(".todo-group-header ion-icon");
+    buttons.forEach((e) => e.addEventListener("click", this.handleMinimize));
   };
 }
