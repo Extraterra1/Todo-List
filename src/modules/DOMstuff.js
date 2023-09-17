@@ -14,7 +14,7 @@ export default class DOM {
     const ul = document.createElement("ul");
     ul.classList.add(project.name);
     selfContainer.appendChild(ul);
-    projectsDiv.appendChild(selfContainer);
+    // projectsDiv.appendChild(selfContainer);
   };
 
   renderTodos = (ev, project) => {
@@ -23,7 +23,7 @@ export default class DOM {
     project.todos.forEach((e) => {
       const li = document.createElement("li");
       li.textContent = e.title;
-      ul.appendChild(li);
+      // ul.appendChild(li);
     });
   };
 }

@@ -19,10 +19,10 @@ let newTodo = new Todo("Joe", "Mama", "02/03/2219", 2);
 console.log(todoList.projects);
 
 let counter = 0;
-const addProjectButton = document.querySelector(".addProject");
-addProjectButton.addEventListener("click", () => new Project(`test${counter++}`));
+// const addProjectButton = document.querySelector(".addProject");
+// addProjectButton.addEventListener("click", () => new Project(`test${counter++}`));
 
-window.todoList = todoList;
-window.newProject = newProject;
-window.project = Project;
-window.todo = Todo;
+// window.todoList = todoList;
+// window.newProject = newProject;
+// window.project = Project;
+// window.todo = Todo;
