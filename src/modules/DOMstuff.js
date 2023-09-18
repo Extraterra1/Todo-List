@@ -1,4 +1,5 @@
 import PubSub from "pubsub-js";
+import moment from "moment/moment";
 
 export default class DOM {
   constructor() {
@@ -6,15 +7,17 @@ export default class DOM {
     PubSub.subscribe("projectChanged", this.renderTodos);
   }
   renderProjects = (ev, project) => {
+    const div = document.createElement("div");
     const projectGroupHTML = `<div class="todo-group">
             <div class="todo-group-header">
               <h4>${project.name}</h4>
               <ion-icon name="remove-outline"></ion-icon>
             </div>
           </div>`;
-
+    div.innerHTML = projectGroupHTML;
+    const projectGroupToAdd = div.firstChild;
     const contentContainer = document.querySelector(".content");
-    contentContainer.innerHTML += projectGroupHTML;
+    contentContainer.appendChild(projectGroupToAdd);
     document.querySelectorAll(".todo-group-header ion-icon").forEach((e) => this.addMinimizeListener(e));
   };
 
@@ -27,6 +30,7 @@ export default class DOM {
     projectContainer.appendChild(projectHeader);
 
     project.todos.forEach((e) => {
+      const div = document.createElement("div");
       const todoHTML = `<div class="todo-content ${e.completed ? "completed" : ""}">
               <div class="todo-content-group">
                 <ion-icon name="document"></ion-icon>
@@ -45,14 +49,78 @@ export default class DOM {
                 <ion-icon name="trash"></ion-icon>
               </div>
             </div>`;
-      projectContainer.innerHTML += todoHTML;
+      div.innerHTML = todoHTML;
+      let todoToAdd = div.firstChild;
+      const editButton = todoToAdd.querySelector("ion-icon[name='create']");
+      const deleteButton = todoToAdd.querySelector("ion-icon[name='trash']");
+      editButton.addEventListener("click", this.handleEdit);
+      deleteButton.addEventListener("click", this.handleDelete);
+
+      todoToAdd = projectContainer.appendChild(todoToAdd);
+
       const minimizeButton = projectContainer.querySelector(".todo-group-header ion-icon");
-      const deleteButtons = projectContainer.querySelectorAll(".todo-content ion-icon[name='trash']");
-      const editButtons = projectContainer.querySelectorAll(".todo-content ion-icon[name='create']");
-      deleteButtons.forEach((e) => this.addDeleteListener(e));
-      editButtons.forEach((e) => this.addEditListener(e));
+
       this.addMinimizeListener(minimizeButton);
     });
+  };
+
+  handleDelete = function () {
+    const project = this.closest(".todo-group").querySelector(".todo-group-header h4").textContent;
+    const todo = this.closest(".todo-content");
+    const todoTitle = todo.querySelector("span.todo-title").textContent;
+
+    PubSub.publish("removedTodo", { title: todoTitle, project });
+  };
+
+  handleEdit = function (ev) {
+    const todoContainer = this.closest(".todo-content");
+    const projectContainer = this.closest(".todo-group");
+    const isCompleted = todoContainer.classList.contains("completed");
+    const todo = {
+      title: todoContainer.querySelector(".todo-title").textContent,
+      desc: todoContainer.querySelector(".todo-desc").textContent,
+      dueDate: todoContainer.querySelector(".todo-due").textContent.split(" ")[1],
+      project: projectContainer.querySelector(".todo-group-header h4").textContent,
+      completed: isCompleted,
+    };
+
+    const modal = document.querySelector(".modal");
+    modal.classList.toggle("visible");
+    const modalTitle = modal.querySelector("h1");
+    modalTitle.textContent = "Edit Todo";
+    const titleInput = modal.querySelector("#title");
+    const descInput = modal.querySelector("#desc");
+    const dueDateInput = modal.querySelector("#dueDate");
+    const projectSelect = modal.querySelector("#projectSelect");
+    const completedCheck = modal.querySelector("#completed");
+    modal.querySelector("button").remove();
+
+    titleInput.value = todo.title;
+    descInput.value = todo.desc;
+    dueDateInput.value = moment(todo.dueDate, "DD/MM/YYYY").format("YYYY-MM-DD");
+    completedCheck.checked = todo.completed;
+
+    const projectOption = document.createElement("option");
+    projectOption.value = todo.project;
+    projectOption.textContent = todo.project;
+    projectSelect.appendChild(projectOption);
+
+    const newSubmitButton = document.createElement("button");
+    newSubmitButton.textContent = "Edit";
+    newSubmitButton.addEventListener("click", (ev) => {
+      let inputs = document.querySelectorAll(".modal input, .modal select");
+      inputs.forEach((e) => {
+        if (e.id === "completed") return (inputs[e.id] = e.checked);
+        inputs[e.id] = e.value;
+      });
+      const { title, desc, dueDate, projectSelect, completed } = inputs;
+      const editedTodo = { title, desc, dueDate, projectSelect, completed };
+
+      PubSub.publish("todoEdited", { oldTodo: todo, editedTodo });
+      return modal.classList.toggle("visible");
+    });
+
+    document.querySelector(".btn-submit").appendChild(newSubmitButton);
   };
 
   handleMinimize = function (ev) {
@@ -67,69 +135,6 @@ export default class DOM {
 
   addMinimizeListener = (button) => {
     button.addEventListener("click", this.handleMinimize);
-  };
-
-  addDeleteListener = (button) => {
-    button.addEventListener("click", function () {
-      const project = this.closest(".todo-group").querySelector(".todo-group-header h4").textContent;
-      const todo = this.closest(".todo-content");
-      const todoTitle = todo.querySelector("span.todo-title").textContent;
-
-      PubSub.publish("removedTodo", { title: todoTitle, project });
-    });
-  };
-
-  addEditListener = (button) => {
-    const todoContainer = button.closest(".todo-content");
-    const projectContainer = button.closest(".todo-group");
-    const isCompleted = todoContainer.classList.contains("completed");
-    const todo = {
-      title: todoContainer.querySelector(".todo-title").textContent,
-      desc: todoContainer.querySelector(".todo-desc").textContent,
-      dueDate: todoContainer.querySelector(".todo-due").textContent.split(" ")[1],
-      project: projectContainer.querySelector(".todo-group-header h4").textContent,
-      completed: isCompleted,
-    };
-
-    button.addEventListener("click", () => {
-      const modal = document.querySelector(".modal");
-      modal.classList.toggle("visible");
-      const modalTitle = modal.querySelector("h1");
-      modalTitle.textContent = "Edit Todo";
-      const titleInput = modal.querySelector("#title");
-      const descInput = modal.querySelector("#desc");
-      const dueDateInput = modal.querySelector("#dueDate");
-      const projectSelect = modal.querySelector("#projectSelect");
-      const completedCheck = modal.querySelector("#completed");
-      modal.querySelector("button").remove();
-
-      titleInput.value = todo.title;
-      descInput.value = todo.desc;
-      dueDateInput.value = todo.dueDate;
-      completedCheck.checked = todo.completed;
-
-      const projectOption = document.createElement("option");
-      projectOption.value = todo.project;
-      projectOption.textContent = todo.project;
-      projectSelect.appendChild(projectOption);
-
-      const newSubmitButton = document.createElement("button");
-      newSubmitButton.textContent = "Edit";
-      newSubmitButton.addEventListener("click", (ev) => {
-        let inputs = document.querySelectorAll(".modal input, .modal select");
-        inputs.forEach((e) => {
-          if (e.id === "completed") return (inputs[e.id] = e.checked);
-          inputs[e.id] = e.value;
-        });
-        const { title, desc, dueDate, projectSelect, completed } = inputs;
-        const editedTodo = { title, desc, dueDate, projectSelect, completed };
-
-        PubSub.publish("todoEdited", { oldTodo: todo, editedTodo });
-        return modal.classList.toggle("visible");
-      });
-
-      document.querySelector(".btn-submit").appendChild(newSubmitButton);
-    });
   };
 
   addNewProjectListener = function () {

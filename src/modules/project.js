@@ -18,6 +18,7 @@ export default class Project {
   };
   edit = (ev, { oldTodo, editedTodo }) => {
     const i = this.todos.findIndex((e) => e.title == oldTodo.title);
+    if (i === -1) return;
     this.todos[i].title = editedTodo.title;
     this.todos[i].description = editedTodo.desc;
     this.todos[i].completed = editedTodo.completed;

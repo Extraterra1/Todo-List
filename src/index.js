@@ -4,18 +4,21 @@ import List from "./modules/list";
 import Project from "./modules/project";
 import Todo from "./modules/todo";
 import DOMstuff from "./modules/DOMstuff";
+import moment from "moment/moment";
 
 const DOM = new DOMstuff();
 DOM.addNewProjectListener();
 DOM.displayModalListener();
-// DOM.modalSubmitListener();
 
 const todoList = new List();
-const newProject = new Project("gym", [
-  new Todo("Laundy", "wash the laundry", "02/03/2019", true),
-  new Todo("Dog", "Pet the dog", "22/11/2009"),
-  new Todo("lmao", "just lmao", "22/03/1902"),
+new Project("House Chores", [
+  new Todo("Laundry", "Do the laundry", "16/01/2023"),
+  new Todo("Dog", "Walk the dog", "22/11/2009", true),
+  new Todo("Meals", "Get the meals ready", "22/03/1902"),
 ]);
+new Project("New TOP Project", [new Todo("Comments", "Remember to write comments", "02/03/2019")]);
+
+new Project("Meetings", [new Todo("Jake", "Starts @14:00", "22/07/2023")]);
 
 PubSub.subscribe("newProjectDOM", (ev, name) => new Project(name));
 PubSub.subscribe("newTodoDOM", (ev, data) => {
@@ -23,7 +26,4 @@ PubSub.subscribe("newTodoDOM", (ev, data) => {
   project.addTodo(new Todo(data.title, data.desc, data.dueDate, data.completed));
 });
 
-window.todoList = todoList;
-window.newProject = newProject;
-window.project = Project;
-window.todo = Todo;
+window.moment = moment;
