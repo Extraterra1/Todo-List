@@ -4,7 +4,6 @@ import List from "./modules/list";
 import Project from "./modules/project";
 import Todo from "./modules/todo";
 import DOMstuff from "./modules/DOMstuff";
-import moment from "moment/moment";
 
 const DOM = new DOMstuff();
 DOM.addNewProjectListener();
@@ -25,5 +24,3 @@ PubSub.subscribe("newTodoDOM", (ev, data) => {
   const project = todoList.projects.find((e) => e.name === data.projectSelect);
   project.addTodo(new Todo(data.title, data.desc, data.dueDate, data.completed));
 });
-
-window.moment = moment;
