@@ -7,6 +7,7 @@ import DOMstuff from "./modules/DOMstuff";
 
 const DOM = new DOMstuff();
 DOM.addNewProjectListener();
+DOM.displayModalListener();
 PubSub.subscribe("newProjectDOM", (ev, name) => new Project(name));
 
 const todoList = new List();

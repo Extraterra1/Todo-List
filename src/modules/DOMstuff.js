@@ -15,6 +15,7 @@ export default class DOM {
 
     const contentContainer = document.querySelector(".content");
     contentContainer.innerHTML += projectGroupHTML;
+    document.querySelectorAll(".todo-group-header ion-icon").forEach((e) => this.addMinimizeListener(e));
   };
 
   renderTodos = (ev, project) => {
@@ -70,6 +71,25 @@ export default class DOM {
       ev.preventDefault();
       const name = document.querySelector("#project").value;
       if (name) PubSub.publish("newProjectDOM", name);
+    });
+  };
+
+  displayModalListener = () => {
+    const plusButton = document.querySelector("button.btn.fixed");
+    plusButton.addEventListener("click", () => {
+      const modal = document.querySelector(".modal");
+      const select = modal.querySelector("select");
+      const ionIcon = document.querySelector("button.btn.fixed ion-icon");
+      ionIcon.classList.toggle("rotate");
+      modal.classList.toggle("visible");
+
+      const projects = document.querySelectorAll(".todo-group-header h4");
+      projects.forEach((e) => {
+        const option = document.createElement("option");
+        option.setAttribute("value", e.textContent);
+        option.textContent = e.textContent;
+        select.appendChild(option);
+      });
     });
   };
 }

@@ -105,14 +105,21 @@ ul {
 }
 
 .todo-group {
-  border: 1px solid var(--text-dark);
+  border-top: 1px solid var(--text-dark);
+  border-left: 1px solid var(--text-dark);
+  border-right: 1px solid var(--text-dark);
   display: grid;
   grid-template-rows: auto;
   grid-auto-rows: 12rem;
 }
 
+.todo-group:has(.todo-content) {
+  border-bottom: 1px solid var(--text-dark);
+}
+
 .todo-group.minimized {
   border-bottom: none;
+  grid-auto-rows: auto;
 }
 
 .todo-group-header {
@@ -137,8 +144,11 @@ ul {
 }
 
 .todo-content.hidden {
-  display: none;
   opacity: 0;
+  visibility: hidden;
+  height: 0;
+  padding: 0;
+  transition: all 0.3s;
 }
 
 .todo-content ion-icon {
@@ -220,8 +230,10 @@ ul {
   top: 50%;
   transform: translate(-50%, -50%);
   visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s;
 
-  background-color: #fffff4;
+  background-color: #fafafa;
   border-radius: 20px;
   z-index: 10;
   padding: 3rem;
@@ -273,7 +285,8 @@ ul {
   gap: 2rem;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   border-radius: 5px;
   outline: none;
   border: 1px solid var(--text-dark);
@@ -283,4 +296,9 @@ ul {
 
 .visible {
   visibility: visible;
+  opacity: 1;
+}
+
+.rotate {
+  transform: rotate(45deg);
 }
