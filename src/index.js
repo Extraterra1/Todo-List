@@ -8,7 +8,7 @@ import DOMstuff from "./modules/DOMstuff";
 const DOM = new DOMstuff();
 DOM.addNewProjectListener();
 DOM.displayModalListener();
-DOM.modalSubmitListener();
+// DOM.modalSubmitListener();
 
 const todoList = new List();
 const newProject = new Project("gym", [

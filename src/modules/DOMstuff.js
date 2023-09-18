@@ -48,7 +48,9 @@ export default class DOM {
       projectContainer.innerHTML += todoHTML;
       const minimizeButton = projectContainer.querySelector(".todo-group-header ion-icon");
       const deleteButtons = projectContainer.querySelectorAll(".todo-content ion-icon[name='trash']");
+      const editButtons = projectContainer.querySelectorAll(".todo-content ion-icon[name='create']");
       deleteButtons.forEach((e) => this.addDeleteListener(e));
+      editButtons.forEach((e) => this.addEditListener(e));
       this.addMinimizeListener(minimizeButton);
     });
   };
@@ -74,6 +76,42 @@ export default class DOM {
       const todoTitle = todo.querySelector("span.todo-title").textContent;
 
       PubSub.publish("removedTodo", { title: todoTitle, project });
+    });
+  };
+
+  addEditListener = (button) => {
+    const todoContainer = button.closest(".todo-content");
+    const projectContainer = button.closest(".todo-group");
+    const isCompleted = todoContainer.classList.contains("completed");
+    const todo = {
+      title: todoContainer.querySelector(".todo-title").textContent,
+      desc: todoContainer.querySelector(".todo-desc").textContent,
+      dueDate: todoContainer.querySelector(".todo-due").textContent.split(" ")[1],
+      project: projectContainer.querySelector(".todo-group-header h4").textContent,
+      completed: isCompleted,
+    };
+
+    button.addEventListener("click", () => {
+      const modal = document.querySelector(".modal");
+      modal.classList.toggle("visible");
+      const modalTitle = modal.querySelector("h1");
+      modalTitle.textContent = "Edit Todo";
+      const titleInput = modal.querySelector("#title");
+      const descInput = modal.querySelector("#desc");
+      const dueDateInput = modal.querySelector("#dueDate");
+      const projectSelect = modal.querySelector("#projectSelect");
+      const completedCheck = modal.querySelector("#completed");
+      modal.querySelector("button").remove();
+
+      titleInput.value = todo.title;
+      descInput.value = todo.desc;
+      dueDateInput.value = todo.dueDate;
+      completedCheck.checked = todo.completed;
+
+      const projectOption = document.createElement("option");
+      projectOption.value = todo.project;
+      projectOption.textContent = todo.project;
+      projectSelect.appendChild(projectOption);
     });
   };
 
@@ -103,23 +141,28 @@ export default class DOM {
         option.textContent = e.textContent;
         select.appendChild(option);
       });
+      this.modalSubmitListener();
     });
   };
   modalSubmitListener = () => {
     const submitButton = document.querySelector(".btn-submit button");
-    submitButton.addEventListener("click", function (e) {
-      e.preventDefault();
-      const modal = this.closest(".modal");
-      let inputs = modal.querySelectorAll("input, select");
-      inputs.forEach((e) => {
-        if (e.id === "completed") return (inputs[e.id] = e.checked);
-        inputs[e.id] = e.value;
-      });
-      const { title, desc, dueDate, projectSelect, completed } = inputs;
-      PubSub.publish("newTodoDOM", { title, desc, dueDate, projectSelect, completed });
-      modal.classList.toggle("visible");
-      const ionIcon = document.querySelector("button.btn.fixed ion-icon");
-      ionIcon.classList.toggle("rotate");
-    });
+    submitButton.addEventListener(
+      "click",
+      function (e) {
+        e.preventDefault();
+        const modal = this.closest(".modal");
+        let inputs = modal.querySelectorAll("input, select");
+        inputs.forEach((e) => {
+          if (e.id === "completed") return (inputs[e.id] = e.checked);
+          inputs[e.id] = e.value;
+        });
+        const { title, desc, dueDate, projectSelect, completed } = inputs;
+        PubSub.publish("newTodoDOM", { title, desc, dueDate, projectSelect, completed });
+        modal.classList.toggle("visible");
+        const ionIcon = document.querySelector("button.btn.fixed ion-icon");
+        ionIcon.classList.toggle("rotate");
+      },
+      { once: true }
+    );
   };
 }
