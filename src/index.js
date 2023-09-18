@@ -8,7 +8,6 @@ import DOMstuff from "./modules/DOMstuff";
 const DOM = new DOMstuff();
 DOM.addNewProjectListener();
 DOM.displayModalListener();
-PubSub.subscribe("newProjectDOM", (ev, name) => new Project(name));
 
 const todoList = new List();
 const newProject = new Project("gym", [
@@ -17,9 +16,11 @@ const newProject = new Project("gym", [
   new Todo("lmao"),
 ]);
 
-let newTodo = new Todo("Joe", "Mama", "02/03/2219", 2);
-
-// console.log(todoList.projects);
+PubSub.subscribe("newProjectDOM", (ev, name) => new Project(name));
+PubSub.subscribe("newTodoDOM", (ev, data) => {
+  const project = todoList.projects.find((e) => e.name === data.projectSelect);
+  project.addTodo(new Todo(data.title, data.desc, data.dueDate));
+});
 
 window.todoList = todoList;
 window.newProject = newProject;

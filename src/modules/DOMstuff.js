@@ -78,6 +78,7 @@ export default class DOM {
     const plusButton = document.querySelector("button.btn.fixed");
     plusButton.addEventListener("click", () => {
       const modal = document.querySelector(".modal");
+      const modalSubmitButton = modal.querySelector(".btn-submit");
       const select = modal.querySelector("select");
       const ionIcon = document.querySelector("button.btn.fixed ion-icon");
       ionIcon.classList.toggle("rotate");
@@ -90,6 +91,21 @@ export default class DOM {
         option.textContent = e.textContent;
         select.appendChild(option);
       });
+
+      this.modalSubmitListener(modalSubmitButton);
+    });
+  };
+  modalSubmitListener = (submitButton) => {
+    submitButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      const modal = this.closest(".modal");
+      let inputs = modal.querySelectorAll("input, select");
+      inputs.forEach((e) => {
+        if (e.id === "completed") return (inputs[e.id] = e.checked);
+        inputs[e.id] = e.value;
+      });
+      const { title, desc, dueDate, projectSelect, completed } = inputs;
+      PubSub.publish("newTodoDOM", { title, desc, dueDate, projectSelect, completed });
     });
   };
 }
