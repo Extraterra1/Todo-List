@@ -27,7 +27,7 @@ export default class DOM {
     projectContainer.appendChild(projectHeader);
 
     project.todos.forEach((e) => {
-      const todoHTML = `<div class="todo-content">
+      const todoHTML = `<div class="todo-content ${e.completed ? "completed" : ""}">
               <div class="todo-content-group">
                 <ion-icon name="document"></ion-icon>
                 <span class="todo-title">${e.title}</span>
@@ -47,6 +47,8 @@ export default class DOM {
             </div>`;
       projectContainer.innerHTML += todoHTML;
       const minimizeButton = projectContainer.querySelector(".todo-group-header ion-icon");
+      const deleteButtons = projectContainer.querySelectorAll(".todo-content ion-icon[name='trash']");
+      deleteButtons.forEach((e) => this.addDeleteListener(e));
       this.addMinimizeListener(minimizeButton);
     });
   };
@@ -65,6 +67,16 @@ export default class DOM {
     button.addEventListener("click", this.handleMinimize);
   };
 
+  addDeleteListener = (button) => {
+    button.addEventListener("click", function () {
+      const project = this.closest(".todo-group").querySelector(".todo-group-header h4").textContent;
+      const todo = this.closest(".todo-content");
+      const todoTitle = todo.querySelector("span.todo-title").textContent;
+
+      PubSub.publish("removedTodo", { title: todoTitle, project });
+    });
+  };
+
   addNewProjectListener = function () {
     const button = document.querySelector("#addProject");
     button.addEventListener("click", function (ev) {
@@ -78,11 +90,11 @@ export default class DOM {
     const plusButton = document.querySelector("button.btn.fixed");
     plusButton.addEventListener("click", () => {
       const modal = document.querySelector(".modal");
-      const modalSubmitButton = modal.querySelector(".btn-submit");
       const select = modal.querySelector("select");
       const ionIcon = document.querySelector("button.btn.fixed ion-icon");
       ionIcon.classList.toggle("rotate");
       modal.classList.toggle("visible");
+      select.innerHTML = "";
 
       const projects = document.querySelectorAll(".todo-group-header h4");
       projects.forEach((e) => {
@@ -91,11 +103,10 @@ export default class DOM {
         option.textContent = e.textContent;
         select.appendChild(option);
       });
-
-      this.modalSubmitListener(modalSubmitButton);
     });
   };
-  modalSubmitListener = (submitButton) => {
+  modalSubmitListener = () => {
+    const submitButton = document.querySelector(".btn-submit button");
     submitButton.addEventListener("click", function (e) {
       e.preventDefault();
       const modal = this.closest(".modal");
@@ -106,6 +117,9 @@ export default class DOM {
       });
       const { title, desc, dueDate, projectSelect, completed } = inputs;
       PubSub.publish("newTodoDOM", { title, desc, dueDate, projectSelect, completed });
+      modal.classList.toggle("visible");
+      const ionIcon = document.querySelector("button.btn.fixed ion-icon");
+      ionIcon.classList.toggle("rotate");
     });
   };
 }

@@ -5,6 +5,7 @@ export default class Project {
     this.todos = [];
     this.name = name;
     PubSub.publish("projectAdded", this);
+    PubSub.subscribe("removedTodo", this.delete);
     if (todos) {
       todos.forEach((e) => this.addTodo(e));
     }
@@ -19,7 +20,9 @@ export default class Project {
     this.todos[i] = newTodo;
     return newTodo;
   };
-  delete = (todo) => {
-    this.todos = this.todos.filter((e) => e != todo);
+  delete = (ev, todo) => {
+    if (todo.project != this.name) return;
+    this.todos = this.todos.filter((e) => e.title != todo.title);
+    PubSub.publish("projectChanged", this);
   };
 }

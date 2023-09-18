@@ -17,8 +17,13 @@ ul {
   list-style: none;
 }
 
+body {
+  min-height: 100vh;
+  display: flex;
+}
+
 .wrapper {
-  height: 100vh;
+  flex-grow: 1;
   padding: 2rem;
   background-color: #fafafa;
   color: var(--text-dark);
@@ -141,6 +146,11 @@ ul {
   font-size: 1.5rem;
 
   transition: all 0.3s;
+}
+
+.todo-content.completed {
+  text-decoration: line-through;
+  opacity: 0.5;
 }
 
 .todo-content.hidden {
