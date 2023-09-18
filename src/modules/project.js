@@ -6,6 +6,7 @@ export default class Project {
     this.name = name;
     PubSub.publish("projectAdded", this);
     PubSub.subscribe("removedTodo", this.delete);
+    PubSub.subscribe("todoEdited", this.edit);
     if (todos) {
       todos.forEach((e) => this.addTodo(e));
     }
@@ -15,10 +16,14 @@ export default class Project {
     this.todos.push(todo);
     PubSub.publish("projectChanged", this);
   };
-  edit = (todo, newTodo) => {
-    const i = this.todos.findIndex((e) => e == todo);
-    this.todos[i] = newTodo;
-    return newTodo;
+  edit = (ev, { oldTodo, editedTodo }) => {
+    const i = this.todos.findIndex((e) => e.title == oldTodo.title);
+    this.todos[i].title = editedTodo.title;
+    this.todos[i].description = editedTodo.desc;
+    this.todos[i].completed = editedTodo.completed;
+    this.todos[i].dueDate = editedTodo.dueDate;
+
+    PubSub.publish("projectChanged", this);
   };
   delete = (ev, todo) => {
     if (todo.project != this.name) return;

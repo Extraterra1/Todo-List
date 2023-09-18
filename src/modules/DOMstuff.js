@@ -112,6 +112,23 @@ export default class DOM {
       projectOption.value = todo.project;
       projectOption.textContent = todo.project;
       projectSelect.appendChild(projectOption);
+
+      const newSubmitButton = document.createElement("button");
+      newSubmitButton.textContent = "Edit";
+      newSubmitButton.addEventListener("click", (ev) => {
+        let inputs = document.querySelectorAll(".modal input, .modal select");
+        inputs.forEach((e) => {
+          if (e.id === "completed") return (inputs[e.id] = e.checked);
+          inputs[e.id] = e.value;
+        });
+        const { title, desc, dueDate, projectSelect, completed } = inputs;
+        const editedTodo = { title, desc, dueDate, projectSelect, completed };
+
+        PubSub.publish("todoEdited", { oldTodo: todo, editedTodo });
+        return modal.classList.toggle("visible");
+      });
+
+      document.querySelector(".btn-submit").appendChild(newSubmitButton);
     });
   };
 
@@ -128,11 +145,16 @@ export default class DOM {
     const plusButton = document.querySelector("button.btn.fixed");
     plusButton.addEventListener("click", () => {
       const modal = document.querySelector(".modal");
+      modal.querySelector("h1").textContent = "Add New Todo";
+      modal.querySelector(".btn-submit button").remove();
       const select = modal.querySelector("select");
       const ionIcon = document.querySelector("button.btn.fixed ion-icon");
       ionIcon.classList.toggle("rotate");
       modal.classList.toggle("visible");
       select.innerHTML = "";
+      const newSubmitButton = document.createElement("button");
+      newSubmitButton.textContent = "Submit";
+      modal.querySelector(".btn-submit").appendChild(newSubmitButton);
 
       const projects = document.querySelectorAll(".todo-group-header h4");
       projects.forEach((e) => {
