@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://fonts.cdnfonts.com/css/basico" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo List</title>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <aside class="side-info">
+          <div class="title">
+            <h1>Todo List</h1>
+          </div>
+          <div class="add-form">
+            <h2>Add a Project</h2>
+            <form>
+              <label for="project">Project</label>
+              <input type="text" name="project" id="project" placeholder="New Project" />
+              <button id="addProject">Add</button>
+            </form>
+          </div>
+          <div class="footer">
+            <h4>The Odin Project &copy; 2023</h4>
+          </div>
+        </aside>
+        <main class="content"></main>
+        <div class="modal">
+          <h1>Add New Todo</h1>
+          <form>
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input type="text" id="title" />
+            </div>
+            <div class="form-group">
+              <label for="desc">Description</label>
+              <input type="text" id="desc" />
+            </div>
+            <div class="form-group">
+              <label for="dueDate">Due Date</label>
+              <input type="date" id="dueDate" />
+            </div>
+            <div class="form-group">
+              <label for="projectSelect">Project</label>
+              <select name="project" id="projectSelect"></select>
+            </div>
+            <div class="form-group">
+              <label for="completed">Completed?</label>
+              <input type="checkbox" id="completed" />
+            </div>
+          </form>
+          <div class="btn-submit">
+            <button>Submit</button>
+          </div>
+        </div>
+        <button class="btn fixed"><ion-icon name="add"></ion-icon></button>
+      </div>
+    </div>
+    <script src="./main.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  </body>
+</html>
