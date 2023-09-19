@@ -16,7 +16,6 @@ new Project("House Chores", [
   new Todo("Meals", "Get the meals ready", "22/03/1902"),
 ]);
 new Project("New TOP Project", [new Todo("Comments", "Remember to write comments", "02/03/2019")]);
-
 new Project("Meetings", [new Todo("Jake", "Starts @14:00", "22/07/2023")]);
 
 PubSub.subscribe("newProjectDOM", (ev, name) => new Project(name));

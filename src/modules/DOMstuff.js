@@ -139,10 +139,13 @@ export default class DOM {
 
   addNewProjectListener = function () {
     const button = document.querySelector("#addProject");
+    const form = button.closest("form");
+
     button.addEventListener("click", function (ev) {
       ev.preventDefault();
       const name = document.querySelector("#project").value;
       if (name) PubSub.publish("newProjectDOM", name);
+      form.reset();
     });
   };
 
@@ -150,6 +153,8 @@ export default class DOM {
     const plusButton = document.querySelector("button.btn.fixed");
     plusButton.addEventListener("click", () => {
       const modal = document.querySelector(".modal");
+      const form = modal.querySelector("form");
+      form.reset();
       modal.querySelector("h1").textContent = "Add New Todo";
       modal.querySelector(".btn-submit button").remove();
       const select = modal.querySelector("select");
