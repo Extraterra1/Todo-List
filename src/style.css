@@ -312,3 +312,13 @@ body {
 .rotate {
   transform: rotate(45deg);
 }
+
+.toast-success {
+  background: var(--bg-success) !important;
+  font-size: 2rem;
+}
+
+.toast-danger {
+  background: var(--text-danger) !important;
+  font-size: 2rem;
+}

@@ -1,4 +1,5 @@
 import "./style.css";
+import "toastify-js/src/toastify.css";
 import PubSub from "pubsub-js";
 import List from "./modules/list";
 import Project from "./modules/project";

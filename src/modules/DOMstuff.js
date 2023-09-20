@@ -1,5 +1,6 @@
 import PubSub from "pubsub-js";
 import moment from "moment/moment";
+import Toastify from "toastify-js";
 
 export default class DOM {
   constructor() {
@@ -144,7 +145,21 @@ export default class DOM {
     button.addEventListener("click", function (ev) {
       ev.preventDefault();
       const name = document.querySelector("#project").value;
-      if (name) PubSub.publish("newProjectDOM", name);
+
+      if (name) {
+        PubSub.publish("newProjectDOM", name);
+        Toastify({
+          text: `Project <strong>${name}</strong> added`,
+          escapeMarkup: false,
+          className: "toast-success",
+        }).showToast();
+      }
+      if (!name)
+        Toastify({
+          text: `Project name cannot be blank`,
+          className: "toast-danger",
+        }).showToast();
+
       form.reset();
     });
   };
