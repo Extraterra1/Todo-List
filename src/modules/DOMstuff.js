@@ -191,25 +191,48 @@ export default class DOM {
       this.modalSubmitListener();
     });
   };
+
   modalSubmitListener = () => {
     const submitButton = document.querySelector(".btn-submit button");
-    submitButton.addEventListener(
-      "click",
-      function (e) {
-        e.preventDefault();
-        const modal = this.closest(".modal");
-        let inputs = modal.querySelectorAll("input, select");
-        inputs.forEach((e) => {
-          if (e.id === "completed") return (inputs[e.id] = e.checked);
-          inputs[e.id] = e.value;
+    const DOM = this;
+    submitButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      const modal = this.closest(".modal");
+      let inputs = modal.querySelectorAll("input, select");
+      inputs.forEach((e) => {
+        if (e.id === "completed") return (inputs[e.id] = e.checked);
+        inputs[e.id] = e.value;
+      });
+      let { title, desc, dueDate, projectSelect, completed } = inputs;
+      if (!moment(dueDate).isValid()) dueDate = moment().format("DD-MM-YYYY");
+      const newTodo = { title, desc, dueDate, projectSelect, completed };
+
+      const errors = DOM.validateNewTodo(newTodo);
+      if (errors) {
+        return errors.forEach((e) => {
+          Toastify({
+            text: e.msg,
+            className: "toast-danger",
+          }).showToast();
         });
-        const { title, desc, dueDate, projectSelect, completed } = inputs;
-        PubSub.publish("newTodoDOM", { title, desc, dueDate, projectSelect, completed });
-        modal.classList.toggle("visible");
-        const ionIcon = document.querySelector("button.btn.fixed ion-icon");
-        ionIcon.classList.toggle("rotate");
-      },
-      { once: true }
-    );
+      }
+      PubSub.publish("newTodoDOM", newTodo);
+      modal.classList.toggle("visible");
+      const ionIcon = document.querySelector("button.btn.fixed ion-icon");
+      ionIcon.classList.toggle("rotate");
+    });
+  };
+
+  validateNewTodo = (inputs) => {
+    const list = JSON.parse(localStorage.getItem("list"));
+    const project = list.projects.find((e) => e.name === inputs.projectSelect);
+    const errors = [];
+
+    const isTodoTitleUnique = !project.todos.find((e) => e.title === inputs.title);
+    if (!isTodoTitleUnique) errors.push({ err: "not unique", msg: "Todo Title must be unique" });
+
+    if (!inputs.desc) errors.push({ err: "no desc", msg: "Description cannot be empty" });
+
+    if (errors.length > 0) return errors;
   };
 }
