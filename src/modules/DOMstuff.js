@@ -236,6 +236,10 @@ export default class DOM {
       modal.classList.toggle("visible");
       const ionIcon = document.querySelector("button.btn.fixed ion-icon");
       ionIcon.classList.toggle("rotate");
+      return Toastify({
+        text: "Todo Added",
+        className: "toast-success",
+      }).showToast();
     });
   };
 
