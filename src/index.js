@@ -24,5 +24,4 @@ PubSub.subscribe("newProjectDOM", (ev, name) => new Project(name));
 PubSub.subscribe("newTodoDOM", (ev, data) => {
   const project = todoList.projects.find((e) => e.name === data.projectSelect);
   project.addTodo(new Todo(data.title, data.desc, data.dueDate, data.completed));
-  console.log(data);
 });

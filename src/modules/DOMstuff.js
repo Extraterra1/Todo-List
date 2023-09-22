@@ -7,6 +7,7 @@ export default class DOM {
     PubSub.subscribe("projectAdded", this.renderProjects);
     PubSub.subscribe("projectChanged", this.renderTodos);
   }
+
   renderProjects = (ev, project) => {
     const div = document.createElement("div");
     const projectGroupHTML = `<div class="todo-group">
@@ -73,9 +74,10 @@ export default class DOM {
     PubSub.publish("removedTodo", { title: todoTitle, project });
   };
 
-  handleEdit = function (ev) {
-    const todoContainer = this.closest(".todo-content");
-    const projectContainer = this.closest(".todo-group");
+  handleEdit = (ev) => {
+    const element = ev.target;
+    const todoContainer = element.closest(".todo-content");
+    const projectContainer = element.closest(".todo-group");
     const isCompleted = todoContainer.classList.contains("completed");
     const todo = {
       title: todoContainer.querySelector(".todo-title").textContent,
@@ -101,6 +103,7 @@ export default class DOM {
     dueDateInput.value = moment(todo.dueDate, "DD/MM/YYYY").format("YYYY-MM-DD");
     completedCheck.checked = todo.completed;
 
+    projectSelect.innerHTML = "";
     const projectOption = document.createElement("option");
     projectOption.value = todo.project;
     projectOption.textContent = todo.project;
@@ -117,8 +120,21 @@ export default class DOM {
       const { title, desc, dueDate, projectSelect, completed } = inputs;
       const editedTodo = { title, desc, dueDate, projectSelect, completed };
 
+      const errors = this.validateNewTodo(editedTodo, { oldTodo: todo });
+      if (errors) {
+        return errors.forEach((e) => {
+          Toastify({
+            text: e.msg,
+            className: "toast-danger",
+          }).showToast();
+        });
+      }
       PubSub.publish("todoEdited", { oldTodo: todo, editedTodo });
-      return modal.classList.toggle("visible");
+      modal.classList.toggle("visible");
+      return Toastify({
+        text: "Todo Edited",
+        className: "toast-success",
+      }).showToast();
     });
 
     document.querySelector(".btn-submit").appendChild(newSubmitButton);
@@ -223,10 +239,11 @@ export default class DOM {
     });
   };
 
-  validateNewTodo = (inputs) => {
+  validateNewTodo = (inputs, { oldTodo } = false) => {
     const list = JSON.parse(localStorage.getItem("list"));
-    const project = list.projects.find((e) => e.name === inputs.projectSelect);
+    let project = list.projects.find((e) => e.name === inputs.projectSelect);
     const errors = [];
+    if (oldTodo) project.todos = project.todos.filter((e) => e.title != oldTodo.title);
 
     const isTodoTitleUnique = !project.todos.find((e) => e.title === inputs.title);
     if (!isTodoTitleUnique) errors.push({ err: "not unique", msg: "Todo Title must be unique" });
