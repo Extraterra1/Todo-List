@@ -227,7 +227,7 @@ body {
 }
 
 .fixed {
-  position: absolute;
+  position: fixed;
   left: 95%;
   top: 90%;
 }
