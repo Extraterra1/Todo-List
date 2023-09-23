@@ -1,4 +1,4 @@
-import PubSub from "pubsub-js";
+import PubSub from 'pubsub-js';
 
 export default class List {
   constructor(arr) {
@@ -6,8 +6,9 @@ export default class List {
     if (arr) {
       arr.forEach((e) => this.projects.push(e));
     }
-    PubSub.subscribe("projectAdded", this.addProject);
+    PubSub.subscribe('projectAdded', this.addProject);
   }
+
   addProject = (ev, project) => {
     this.projects.push(project);
   };
