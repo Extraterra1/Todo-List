@@ -11,5 +11,6 @@ export default class List {
 
   addProject = (ev, project) => {
     this.projects.push(project);
+    localStorage.setItem('list', JSON.stringify(this));
   };
 }

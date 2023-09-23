@@ -20,7 +20,9 @@ new Project('New TOP Project', [new Todo('Comments', 'Remember to write comments
 new Project('Meetings', [new Todo('Jake', 'Starts @14:00', '22-07-2023')]);
 
 PubSub.subscribe('projectChanged', (ev, name) => localStorage.setItem('list', JSON.stringify(todoList)));
-PubSub.subscribe('newProjectDOM', (ev, name) => new Project(name));
+PubSub.subscribe('newProjectDOM', (ev, name) => {
+  new Project(name);
+});
 PubSub.subscribe('newTodoDOM', (ev, data) => {
   const project = todoList.projects.find((e) => e.name === data.projectSelect);
   project.addTodo(new Todo(data.title, data.desc, data.dueDate, data.completed));

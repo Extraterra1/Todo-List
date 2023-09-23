@@ -6,7 +6,6 @@ export default class DOM {
   constructor() {
     PubSub.subscribe('projectAdded', this.renderProjects);
     PubSub.subscribe('projectChanged', this.renderTodos);
-    console.log('ddd');
   }
 
   renderProjects = (ev, project) => {
